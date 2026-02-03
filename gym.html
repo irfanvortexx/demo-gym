@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRONX Fitness Club</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+/* 🌗 THEME VARIABLES */
+:root{
+  --bg:#0b0b0b;
+  --text:#ffffff;
+  --card:#141414;
+  --border:#222;
+  --primary:#ff2d00;
+  --secondary:#aaaaaa;
+  --header-bg:rgba(11, 11, 11, 0.95);
+  --header-border:rgba(34, 34, 34, 0.5);
+}
+body.light{
+  --bg:#f4f4f4;
+  --text:#111111;
+  --card:#ffffff;
+  --border:#dddddd;
+  --secondary:#444444;
+  --header-bg:rgba(255, 255, 255, 0.95);
+  --header-border:rgba(221, 221, 221, 0.5);
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  transition:0.4s;
+  scroll-behavior:smooth;
+}
+
+/* LOADING SCREEN */
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.5s, visibility 0.5s;
+}
+
+#loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader {
+  width: 60px;
+  height: 60px;
+  border: 4px solid var(--primary);
+  border-top: 4px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* HEADER */
+header{
+  position:fixed;
+  top:0;
+  width:100%;
+  padding:12px 8%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:var(--header-bg);
+  backdrop-filter:blur(10px);
+  z-index:1000;
+  transform: translateY(-100%);
+  transition: transform 0.5s ease, background 0.4s, border-color 0.4s;
+  border-bottom: 1px solid var(--header-border);
+}
+header.visible {
+  transform: translateY(0);
+}
+.logo{
+  font-size:24px;
+  font-weight:700;
+  color:var(--primary);
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.logo.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* NAVIGATION */
+nav{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+.nav-links{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
+.nav-links a{
+  text-decoration:none;
+  color:var(--text);
+  font-size:14px;
+  font-weight:500;
+  transition:0.3s;
+  opacity: 0;
+  transform: translateY(-10px);
+  position: relative;
+  padding: 5px 0;
+}
+.nav-links a:nth-child(1) { transition-delay: 0.1s; }
+.nav-links a:nth-child(2) { transition-delay: 0.2s; }
+.nav-links a:nth-child(3) { transition-delay: 0.3s; }
+.nav-links a:nth-child(4) { transition-delay: 0.4s; }
+.nav-links a:nth-child(5) { transition-delay: 0.5s; }
+.nav-links a:nth-child(6) { transition-delay: 0.6s; }
+.nav-links a.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.nav-links a:hover{
+  color:var(--primary);
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: width 0.3s ease;
+}
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* THEME BUTTON */
+.theme-btn{
+  margin-left:15px;
+  background:none;
+  border:none;
+  color:var(--text);
+  font-size:18px;
+  cursor:pointer;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.5s, transform 0.5s, color 0.3s, background 0.3s;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.theme-btn:hover {
+  background: rgba(255, 45, 0, 0.1);
+}
+.theme-btn.animated {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* HAMBURGER BUTTON - Custom 3 lines */
+.menu-btn{
+  display:none;
+  background:none;
+  border:none;
+  cursor:pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
+  position: relative;
+  z-index: 1001;
+}
+.menu-btn:hover {
+  background: rgba(255, 45, 0, 0.1);
+}
+
+/* Custom 3 line hamburger icon */
+.menu-btn .line {
+  width: 24px;
+  height: 2px;
+  background-color: var(--text);
+  margin: 3px 0;
+  transition: 0.3s;
+  border-radius: 2px;
+}
+
+/* Animation for when menu is open */
+.menu-btn.active .line:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menu-btn.active .line:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-btn.active .line:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* HERO */
+.hero{
+  height:100vh;
+  display:flex;
+  align-items:center;
+  padding:0 8%;
+  background:
+    linear-gradient(120deg,rgba(0,0,0,0.75),rgba(0,0,0,0.9)),
+    url("https://images.unsplash.com/photo-1554284126-aa88f22d8b74?auto=format&fit=crop&w=1600&q=80")
+    center/cover no-repeat;
+}
+body.light .hero{
+  background:
+    linear-gradient(120deg,rgba(255,255,255,0.6),rgba(255,255,255,0.85)),
+    url("https://images.unsplash.com/photo-1554284126-aa88f22d8b74?auto=format&fit=crop&w=1600&q=80")
+    center/cover no-repeat;
+}
+.hero-content{
+  max-width:650px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s, transform 1s;
+}
+.hero-content.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero h1{
+  font-size:52px;
+  font-weight:700;
+}
+.hero h1 span{
+  color:var(--primary);
+}
+.hero p{
+  margin:15px 0 25px;
+  color:var(--secondary);
+  font-size:17px;
+}
+.btn{
+  padding:12px 30px;
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  border-radius:30px;
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:none;
+  transition:0.3s;
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.btn.animated {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.8s;
+}
+.btn:hover{
+  transform:translateY(-3px) scale(1.05);
+  box-shadow:0 10px 30px rgba(255,45,0,0.4);
+}
+
+/* SECTION */
+section{
+  padding:90px 8%;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 0.8s, transform 0.8s;
+}
+section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.section-title{
+  text-align:center;
+  font-size:36px;
+  margin-bottom:50px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s, transform 0.8s;
+}
+.section-title.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+.section-title span{
+  color:var(--primary);
+}
+
+/* ABOUT */
+.about{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:50px;
+  align-items:center;
+}
+.about img{
+  width:100%;
+  border-radius:16px;
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.8s, transform 0.8s;
+}
+.about img.animated {
+  opacity: 1;
+  transform: translateX(0);
+}
+.about div{
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.8s, transform 0.8s;
+}
+.about div.animated {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* SERVICES */
+.services{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:25px;
+}
+.service-box{
+  background:var(--card);
+  padding:25px;
+  border-radius:16px;
+  border:1px solid var(--border);
+  transition:0.3s;
+  opacity: 0;
+  transform: translateY(30px);
+}
+.service-box.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+.service-box:nth-child(1) { transition-delay: 0.1s; }
+.service-box:nth-child(2) { transition-delay: 0.2s; }
+.service-box:nth-child(3) { transition-delay: 0.3s; }
+.service-box:nth-child(4) { transition-delay: 0.4s; }
+.service-box:hover{
+  transform:translateY(-10px) scale(1.02);
+}
+.service-box i{
+  font-size:36px;
+  color:var(--primary);
+  margin-bottom:15px;
+}
+
+/* PLANS */
+.plans{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:25px;
+}
+.plan-box{
+  background:var(--card);
+  padding:28px;
+  border-radius:16px;
+  border:1px solid var(--border);
+  text-align:center;
+  transition:0.3s;
+  opacity: 0;
+  transform: translateY(30px);
+}
+.plan-box.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+.plan-box:nth-child(1) { transition-delay: 0.1s; }
+.plan-box:nth-child(2) { transition-delay: 0.2s; }
+.plan-box:nth-child(3) { transition-delay: 0.3s; }
+.plan-box:hover{
+  transform:scale(1.05);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.plan-box h3{
+  color:var(--primary);
+  margin-bottom: 10px;
+}
+.plan-box .price {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 10px 0;
+  color: var(--primary);
+}
+.plan-box ul {
+  text-align: left;
+  margin: 20px 0;
+  padding-left: 20px;
+}
+.plan-box li {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+.plan-box strong {
+  color: var(--primary);
+}
+
+/* GALLERY */
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:20px;
+}
+.gallery img{
+  width:100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius:14px;
+  transition:0.3s;
+  opacity: 0;
+  transform: scale(0.9);
+}
+.gallery img.animated {
+  opacity: 1;
+  transform: scale(1);
+}
+.gallery img:nth-child(1) { transition-delay: 0.1s; }
+.gallery img:nth-child(2) { transition-delay: 0.2s; }
+.gallery img:nth-child(3) { transition-delay: 0.3s; }
+.gallery img:nth-child(4) { transition-delay: 0.4s; }
+.gallery img:hover{
+  transform:scale(1.05);
+}
+
+/* CONTACT */
+.contact{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:35px;
+}
+.contact-info p{
+  margin:10px 0;
+  font-size:16px;
+  opacity: 0;
+  transform: translateX(-30px);
+}
+.contact-info p.animated {
+  opacity: 1;
+  transform: translateX(0);
+}
+.contact-info p:nth-child(1) { transition-delay: 0.1s; }
+.contact-info p:nth-child(2) { transition-delay: 0.2s; }
+.contact-info p:nth-child(3) { transition-delay: 0.3s; }
+.contact-info p:nth-child(4) { transition-delay: 0.4s; }
+.contact form{
+  background:var(--card);
+  padding:25px;
+  border-radius:16px;
+  border:1px solid var(--border);
+  opacity: 0;
+  transform: translateX(30px);
+}
+.contact form.animated {
+  opacity: 1;
+  transform: translateX(0);
+}
+.contact input,
+.contact textarea{
+  width:100%;
+  padding:12px;
+  margin-bottom:12px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--text);
+}
+.contact button{
+  width:100%;
+}
+
+/* FOOTER */
+footer{
+  text-align:center;
+  padding:25px;
+  border-top:1px solid var(--border);
+  color:var(--secondary);
+  opacity: 0;
+  transform: translateY(30px);
+}
+footer.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* SCROLL TO TOP BUTTON */
+#scrollToTop {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+#scrollToTop.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+#scrollToTop:hover {
+  transform: translateY(-5px) scale(1.1);
+  box-shadow: 0 5px 20px rgba(255,45,0,0.4);
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .about,.contact{
+    grid-template-columns:1fr;
+  }
+  .hero h1{
+    font-size:38px;
+  }
+}
+
+/* MOBILE VIEW - Show hamburger menu */
+@media(max-width:768px){
+  /* Show hamburger button */
+  .menu-btn{
+    display:flex;
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  .menu-btn.animated {
+    opacity: 1;
+    transform: scale(1);
+  }
+  
+  /* Hide regular nav links on mobile by default */
+  .nav-links{
+    position:fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background:var(--header-bg);
+    backdrop-filter: blur(15px);
+    flex-direction:column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    display:none;
+    z-index:1000;
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: opacity 0.3s, transform 0.3s;
+  }
+  
+  .nav-links.active {
+    display: flex;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .nav-links a{
+    font-size: 22px;
+    padding: 15px 0;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s, color 0.3s;
+    width: auto;
+  }
+  
+  .nav-links.active a {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .nav-links a:nth-child(1) { transition-delay: 0.1s; }
+  .nav-links a:nth-child(2) { transition-delay: 0.2s; }
+  .nav-links a:nth-child(3) { transition-delay: 0.3s; }
+  .nav-links a:nth-child(4) { transition-delay: 0.4s; }
+  .nav-links a:nth-child(5) { transition-delay: 0.5s; }
+  .nav-links a:nth-child(6) { transition-delay: 0.6s; }
+  
+  .nav-links a::after {
+    display: none; /* Hide underline on mobile */
+  }
+  
+  .plans {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Adjust header padding for mobile */
+  header {
+    padding: 10px 5%;
+  }
+}
+
+/* DESKTOP VIEW - Show horizontal nav links */
+@media(min-width:769px){
+  .menu-btn{
+    display:none !important;
+  }
+  .nav-links{
+    display:flex !important;
+  }
+}
+
+/* ANIMATION */
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(40px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* Overlay when menu is open */
+.menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+.menu-overlay.active {
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div id="loading-screen">
+  <div class="loader"></div>
+  <h2>IRONX FITNESS</h2>
+  <p>Loading your fitness journey...</p>
+</div>
+
+<!-- SCROLL TO TOP BUTTON -->
+<button id="scrollToTop">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<!-- Overlay for mobile menu -->
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<header id="main-header">
+  <div class="logo"><i class="fa-solid fa-dumbbell"></i> IRONX</div>
+
+  <nav>
+    <!-- Hamburger Button (3 lines - Only shows on mobile) -->
+    <button class="menu-btn" id="menuBtn" onclick="toggleMenu()">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </button>
+
+    <!-- Nav Links (Shows horizontally on desktop, dropdown on mobile) -->
+    <div class="nav-links" id="navLinks">
+      <a href="#home" onclick="closeMenu()">Home</a>
+      <a href="#about" onclick="closeMenu()">About</a>
+      <a href="#services" onclick="closeMenu()">Services</a>
+      <a href="#plans" onclick="closeMenu()">Plans</a>
+      <a href="#gallery" onclick="closeMenu()">Photos</a>
+      <a href="#contact" onclick="closeMenu()">Contact</a>
+    </div>
+
+    <!-- Theme Toggle -->
+    <button class="theme-btn" onclick="toggleTheme()">
+      <i id="themeIcon" class="fa-solid fa-moon"></i>
+    </button>
+  </nav>
+</header>
+
+<!-- HOME -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <h1>Build Your <span>Dream Body</span><br>With IRONX Gym</h1>
+    <p>Premium fitness experience with expert trainers and modern equipment.</p>
+    <a href="#contact" class="btn">Join Now</a>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <h2 class="section-title">About <span>Us</span></h2>
+  <div class="about">
+    <img src="https://images.unsplash.com/photo-1599058917212-d750089bc07c?auto=format&fit=crop&w=1200&q=80" alt="Gym">
+    <div>
+      <p>IRONX Gym is a professional fitness center designed for people who want real results. We provide personalized training, modern equipment, and expert guidance.</p>
+      <p>Our mission is to transform your body and lifestyle through fitness.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <h2 class="section-title">Our <span>Services</span></h2>
+  <div class="services">
+    <div class="service-box">
+      <i class="fa-solid fa-dumbbell"></i>
+      <h3>Strength Training</h3>
+      <p>Build muscle with professional training programs.</p>
+    </div>
+    <div class="service-box">
+      <i class="fa-solid fa-heart-pulse"></i>
+      <h3>Cardio Training</h3>
+      <p>Improve endurance and burn calories effectively.</p>
+    </div>
+    <div class="service-box">
+      <i class="fa-solid fa-person-running"></i>
+      <h3>Functional Fitness</h3>
+      <p>Enhance flexibility and mobility.</p>
+    </div>
+    <div class="service-box">
+      <i class="fa-solid fa-apple-whole"></i>
+      <h3>Nutrition Guidance</h3>
+      <p>Personalized diet plans for faster results.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section id="plans">
+  <h2 class="section-title">Membership <span>Plans</span></h2>
+  <div class="plans">
+
+    <!-- BASIC PLAN -->
+    <div class="plan-box">
+      <h3>Basic Plan</h3>
+      <p class="price">₹999 / month</p>
+      <p><strong>Target:</strong> Beginners or occasional gym-goers</p>
+      <ul>
+        <li>Access to gym equipment (cardio & strength machines)</li>
+        <li>1 personal training session per month</li>
+        <li>Locker and shower facilities</li>
+        <li>Group fitness classes (limited access, 2 per week)</li>
+        <li>Standard gym support</li>
+      </ul>
+      <p><strong>Example:</strong> Ideal for someone starting fitness or exercising 2–3 times per week.</p>
+      <a href="#contact" class="btn" style="margin-top: 15px;">Choose Plan</a>
+    </div>
+
+    <!-- STANDARD PLAN -->
+    <div class="plan-box">
+      <h3>Standard Plan</h3>
+      <p class="price">₹1,799 / month</p>
+      <p><strong>Target:</strong> Regular gym-goers aiming for better fitness results</p>
+      <ul>
+        <li>Full access to gym equipment</li>
+        <li>4 personal training sessions per month</li>
+        <li>Locker and shower facilities</li>
+        <li>Unlimited group fitness classes (yoga, Zumba, HIIT)</li>
+        <li>Nutritional guidance and fitness assessment</li>
+        <li>Access to sauna/steam room (if available)</li>
+      </ul>
+      <p><strong>Example:</strong> Suitable for someone exercising 4–5 times per week with a focus on structured training.</p>
+      <a href="#contact" class="btn" style="margin-top: 15px;">Choose Plan</a>
+    </div>
+
+    <!-- PREMIUM PLAN -->
+    <div class="plan-box">
+      <h3>Premium Plan</h3>
+      <p class="price">₹2,999 / month</p>
+      <p><strong>Target:</strong> Fitness enthusiasts or athletes seeking comprehensive support</p>
+      <ul>
+        <li>24/7 gym access</li>
+        <li>Unlimited personal training sessions</li>
+        <li>Locker, shower, and towel services</li>
+        <li>Unlimited group fitness classes</li>
+        <li>Nutrition & diet planning with regular follow-ups</li>
+        <li>Access to premium amenities (sauna, steam, swimming pool, spa)</li>
+        <li>Priority booking for classes & events</li>
+        <li>Regular body composition analysis & progress tracking</li>
+      </ul>
+      <p><strong>Example:</strong> Perfect for advanced users who want full support, training guidance, and extra facilities.</p>
+      <a href="#contact" class="btn" style="margin-top: 15px;">Choose Plan</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <h2 class="section-title">Gym <span>Photos</span></h2>
+  <div class="gallery">
+    <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=800&q=80" alt="Gym Photo">
+    <img src="https://images.unsplash.com/photo-1558611848-73f7eb4001a1?auto=format&fit=crop&w=800&q=80" alt="Gym Photo">
+    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80" alt="Gym Photo">
+    <img src="https://images.unsplash.com/photo-1605296867304-46d5465a13f1?auto=format&fit=crop&w=800&q=80" alt="Gym Photo">
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <h2 class="section-title">Contact <span>Us</span></h2>
+  <div class="contact">
+    <div class="contact-info">
+      <p><i class="fa-solid fa-location-dot"></i> Rajapalayam, Tamil Nadu</p>
+      <p><i class="fa-solid fa-phone"></i> +91 XXXXX XXXXX</p>
+      <p><i class="fa-solid fa-envelope"></i> ironx@email.com</p>
+      <p><i class="fa-solid fa-clock"></i> 5:00 AM - 10:00 PM</p>
+    </div>
+    <form onsubmit="sendMessage(event)">
+      <input type="text" placeholder="Your Name" required>
+      <input type="email" placeholder="Your Email" required>
+      <textarea rows="4" placeholder="Your Message"></textarea>
+      <button class="btn" type="submit">Send Message</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  © 2026 IRONX Gym | Premium Fitness Website
+</footer>
+
+<script>
+// LOADING SCREEN
+window.addEventListener('load', function() {
+  const loadingScreen = document.getElementById('loading-screen');
+  setTimeout(() => {
+    loadingScreen.classList.add('hidden');
+    
+    // Initialize animations after loading
+    setTimeout(() => {
+      initAnimations();
+      initScrollAnimations();
+      initScrollToTop();
+    }, 300);
+  }, 1500);
+});
+
+// 🌗 DARK / LIGHT MODE
+function toggleTheme(){
+  document.body.classList.toggle("light");
+  let icon=document.getElementById("themeIcon");
+  if(document.body.classList.contains("light")){
+    icon.className="fa-solid fa-sun";
+    localStorage.setItem("theme","light");
+  }else{
+    icon.className="fa-solid fa-moon";
+    localStorage.setItem("theme","dark");
+  }
+}
+
+// Load saved theme on page load
+function loadTheme() {
+  let theme=localStorage.getItem("theme");
+  if(theme==="light"){
+    document.body.classList.add("light");
+    document.getElementById("themeIcon").className="fa-solid fa-sun";
+  }
+}
+
+// CONTACT ALERT
+function sendMessage(e){
+  e.preventDefault();
+  alert("🔥 Thank you! We will contact you soon.");
+}
+
+// 📱 MOBILE MENU FUNCTIONS
+function toggleMenu() {
+  const menuBtn = document.getElementById('menuBtn');
+  const navLinks = document.getElementById('navLinks');
+  const menuOverlay = document.getElementById('menuOverlay');
+  
+  menuBtn.classList.toggle('active');
+  navLinks.classList.toggle('active');
+  menuOverlay.classList.toggle('active');
+  
+  // Prevent body scroll when menu is open
+  if (navLinks.classList.contains('active')) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = 'auto';
+  }
+}
+
+function closeMenu() {
+  const menuBtn = document.getElementById('menuBtn');
+  const navLinks = document.getElementById('navLinks');
+  const menuOverlay = document.getElementById('menuOverlay');
+  
+  menuBtn.classList.remove('active');
+  navLinks.classList.remove('active');
+  menuOverlay.classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+// Close menu when clicking on overlay
+document.getElementById('menuOverlay').addEventListener('click', closeMenu);
+
+// Close menu when pressing Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeMenu();
+  }
+});
+
+// ANIMATION FUNCTIONS
+function initAnimations() {
+  // Header animations
+  const header = document.getElementById('main-header');
+  const logo = document.querySelector('.logo');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const themeBtn = document.querySelector('.theme-btn');
+  const menuBtn = document.getElementById('menuBtn');
+  
+  header.classList.add('visible');
+  setTimeout(() => {
+    logo.classList.add('animated');
+    themeBtn.classList.add('animated');
+    
+    // Animate menu button on mobile only
+    if (window.innerWidth <= 768) {
+      menuBtn.classList.add('animated');
+    }
+    
+    // Animate nav links (only on desktop, mobile links animate when menu opens)
+    if (window.innerWidth > 768) {
+      navLinks.forEach(link => link.classList.add('visible'));
+    }
+  }, 300);
+  
+  // Hero animations
+  const heroContent = document.querySelector('.hero-content');
+  const heroBtn = document.querySelector('.hero .btn');
+  
+  setTimeout(() => {
+    heroContent.classList.add('animated');
+    setTimeout(() => {
+      heroBtn.classList.add('animated');
+    }, 500);
+  }, 500);
+}
+
+// Handle window resize
+window.addEventListener('resize', function() {
+  const navLinks = document.getElementById('navLinks');
+  const menuBtn = document.getElementById('menuBtn');
+  const menuOverlay = document.getElementById('menuOverlay');
+  
+  // Reset menu state on resize to desktop
+  if (window.innerWidth > 768) {
+    closeMenu();
+    navLinks.style.display = 'flex';
+  } else {
+    navLinks.style.display = 'none';
+  }
+});
+
+// SCROLL ANIMATIONS
+function initScrollAnimations() {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        // Section title animation
+        const title = entry.target.querySelector('.section-title');
+        if (title) title.classList.add('animated');
+        
+        // Section content animations
+        if (entry.target.id === 'about') {
+          const aboutImg = entry.target.querySelector('img');
+          const aboutDiv = entry.target.querySelector('.about div');
+          if (aboutImg) aboutImg.classList.add('animated');
+          if (aboutDiv) aboutDiv.classList.add('animated');
+        }
+        
+        if (entry.target.id === 'services') {
+          const serviceBoxes = entry.target.querySelectorAll('.service-box');
+          serviceBoxes.forEach(box => box.classList.add('animated'));
+        }
+        
+        if (entry.target.id === 'plans') {
+          const planBoxes = entry.target.querySelectorAll('.plan-box');
+          planBoxes.forEach(box => box.classList.add('animated'));
+        }
+        
+        if (entry.target.id === 'gallery') {
+          const galleryImgs = entry.target.querySelectorAll('.gallery img');
+          galleryImgs.forEach(img => img.classList.add('animated'));
+        }
+        
+        if (entry.target.id === 'contact') {
+          const contactInfo = entry.target.querySelectorAll('.contact-info p');
+          const contactForm = entry.target.querySelector('.contact form');
+          contactInfo.forEach(p => p.classList.add('animated'));
+          if (contactForm) contactForm.classList.add('animated');
+        }
+        
+        if (entry.target.tagName === 'FOOTER') {
+          entry.target.classList.add('animated');
+        }
+        
+        // Mark section as visible
+        entry.target.classList.add('visible');
+      }
+    });
+  }, observerOptions);
+
+  // Observe all sections and footer
+  document.querySelectorAll('section, footer').forEach(section => {
+    observer.observe(section);
+  });
+}
+
+// SCROLL TO TOP FUNCTIONALITY
+function initScrollToTop() {
+  const scrollToTopBtn = document.getElementById('scrollToTop');
+  
+  window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+      scrollToTopBtn.classList.add('visible');
+    } else {
+      scrollToTopBtn.classList.remove('visible');
+    }
+  });
+  
+  scrollToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
+}
+
+// SMOOTH SCROLL FOR NAV LINKS
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const targetId = this.getAttribute('href');
+    if (targetId === '#') return;
+    
+    const targetElement = document.querySelector(targetId);
+    if (targetElement) {
+      window.scrollTo({
+        top: targetElement.offsetTop - 80,
+        behavior: 'smooth'
+      });
+    }
+  });
+});
+
+// Initialize everything
+document.addEventListener('DOMContentLoaded', function() {
+  // Load saved theme
+  loadTheme();
+  
+  // Set loading screen to hidden after page loads
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('hidden');
+    initAnimations();
+    initScrollAnimations();
+    initScrollToTop();
+  }, 1000);
+});
+</script>
+
+</body>
+</html>
